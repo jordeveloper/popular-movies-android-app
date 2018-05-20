@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Popular Movies</string>
+    <string name="API_ROOT" translatable="false">https://api.themoviedb.org/3/movie/</string>
+    <string name="API_POPULAR_ENDPOINT" translatable="false">popular</string>
+    <string name="API_TOP_RATED_ENDPOINT" translatable="false">top_rated</string>
+    <string name="API_KEY_QUERY_STRING_PARAMETER" translatable="false">api_key</string>
+    <string name="API_IMAGE_ENDPOINT_ROOT" translatable="false">http://image.tmdb.org/t/p/w185</string>
 </resources>
