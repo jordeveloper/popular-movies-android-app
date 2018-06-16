@@ -18,7 +18,7 @@ public class APIUtils {
 
     // base URLs
     public final static String API_BASE_URL = "https://api.themoviedb.org/3/movie/";
-    public final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
+    public final static String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
 
     // endpoints for sorted data
     public final static String POPULAR_ENDPOINT = "popular";

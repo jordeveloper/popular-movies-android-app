@@ -7,43 +7,55 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.ImageView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.example.android.popularmovies.utilities.APIUtils;
-import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>>{
     private static final String LOG_TAG = "MainActivity";
+    private RecyclerView mRecyclerView;
+    private MoviePosterAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mRecyclerView = findViewById(R.id.movie_poster_rv);
+        mRecyclerView.setHasFixedSize(true);
+
+        // use a grid layout manager with 2 columns
+        mLayoutManager = new GridLayoutManager(this, 2);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        // set up adapter and fill later with the data
+        mAdapter = new MoviePosterAdapter();
+        mRecyclerView.setAdapter(mAdapter);
 
         // Check for internet connection
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-        // TODO Set up empty view for the list view
-//        this.mEmptyStateTextView = findViewById(R.id.empty_view);
-//        movieListView.setEmptyView(this.mEmptyStateTextView);
-
         if (isConnected){
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(100, null, this);
             Log.v(LOG_TAG, "Loader created!");
         } else {
-            // TODO Hide loading indicator because the data has been loaded
-            //View loadingIndicator = findViewById(R.id.progress_indicator);
-            //loadingIndicator.setVisibility(View.GONE);
+            // DONE Hide loading indicator because the data has been loaded
+            View loadingIndicator = findViewById(R.id.progress_indicator);
+            loadingIndicator.setVisibility(View.GONE);
 
-            // TODO Set empty state text to display "No internet connection."
-            //mEmptyStateTextView.setText(R.string.no_internet);
+            // DONE Display "No internet connection."
+            TextView noInternetTextView = findViewById(R.id.no_internet_notice);
+            noInternetTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -56,17 +68,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public void onLoadFinished(Loader<List<Movie>> loader, List<Movie> data) {
-        TextView tv = findViewById(R.id.test);
-        tv.setText(data.get(0).getOriginalTitle());
+        // DONE hide the loading indicator and the no internet text view
+        View loadingIndicator = findViewById(R.id.progress_indicator);
+        loadingIndicator.setVisibility(View.GONE);
+        TextView noInternetTextView = findViewById(R.id.no_internet_notice);
+        noInternetTextView.setVisibility(View.GONE);
 
-        ImageView iv = findViewById(R.id.poster);
-        Picasso.get().load(APIUtils.buildImageUrl(data.get(0).getPosterPath()).toString()).into(iv);
-
-        // TODO hide the loading indicator and the no internet text view; clear the adapter
+        // DONE fill in data into layout
+        if (data != null) {
+            mAdapter.updateData((ArrayList<Movie>) data);
+        }
     }
 
     @Override
     public void onLoaderReset(Loader<List<Movie>> loader) {
-        // TODO clear the adapter
+        // DONE clear the adapter
+        mAdapter.updateData(null);
     }
 }
