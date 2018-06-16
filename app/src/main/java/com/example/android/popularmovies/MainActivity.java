@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -18,11 +19,17 @@ import com.example.android.popularmovies.utilities.APIUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>>{
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<Movie>>, MoviePosterAdapter.GridItemClickListener{
     private static final String LOG_TAG = "MainActivity";
     private RecyclerView mRecyclerView;
     private MoviePosterAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
+    private List<Movie> mMovies;
+    public static final String MOVIE_TITLE_DATA = "title";
+    public static final String MOVIE_RELEASE_DATA = "release date";
+    public static final String MOVIE_POSTER_URL_DATA = "movie poster url";
+    public static final String MOVIE_VOTE_AVERAGE_DATA = "vote average";
+    public static final String MOVIE_SUMMARY_DATA = "plot synopsis";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         // set up adapter and fill later with the data
-        mAdapter = new MoviePosterAdapter();
+        mAdapter = new MoviePosterAdapter(this);
         mRecyclerView.setAdapter(mAdapter);
 
         // Check for internet connection
@@ -74,9 +81,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         TextView noInternetTextView = findViewById(R.id.no_internet_notice);
         noInternetTextView.setVisibility(View.GONE);
 
+        mMovies = data;
+
         // DONE fill in data into layout
-        if (data != null) {
-            mAdapter.updateData((ArrayList<Movie>) data);
+        if (mMovies != null) {
+            mAdapter.updateData((ArrayList<Movie>) mMovies);
         }
     }
 
@@ -84,5 +93,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<List<Movie>> loader) {
         // DONE clear the adapter
         mAdapter.updateData(null);
+    }
+
+    @Override
+    public void onGridItemClick(int clickedItemIndex) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        Movie movie = mMovies.get(clickedItemIndex);
+        intent.putExtra(this.MOVIE_TITLE_DATA, movie.getTitle());
+        intent.putExtra(this.MOVIE_RELEASE_DATA, movie.getReleaseDate());
+        intent.putExtra(this.MOVIE_POSTER_URL_DATA, movie.getPosterPath());
+        intent.putExtra(this.MOVIE_VOTE_AVERAGE_DATA, movie.getVoteAverage());
+        intent.putExtra(this.MOVIE_SUMMARY_DATA, movie.getOverview());
+        startActivity(intent);
     }
 }

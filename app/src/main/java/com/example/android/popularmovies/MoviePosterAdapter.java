@@ -16,10 +16,12 @@ import java.util.ArrayList;
 public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.MovieViewHolder>{
     private int numMovies;
     private ArrayList<Movie> movies;
+    final private GridItemClickListener mOnClickListener;
 
-    public MoviePosterAdapter() {
+    public MoviePosterAdapter(GridItemClickListener listener) {
         this.movies = null;
         this.numMovies = 0;
+        this.mOnClickListener = listener;
     }
 
     void updateData(ArrayList<Movie> movieList) {
@@ -33,17 +35,24 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
         notifyDataSetChanged();
     }
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public ImageView movieHolder;
         public MovieViewHolder(View v) {
             super(v);
             movieHolder = v.findViewById(R.id.movie_list_item);
+            v.setOnClickListener(this);
         }
 
         public void bind(ArrayList<Movie> movies, int position) {
             if (movies != null && position < movies.size()){
                 Picasso.get().load(APIUtils.buildImageUrl(movies.get(position).getPosterPath()).toString()).into(movieHolder);
             }
+        }
+
+        @Override
+        public void onClick(View v) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onGridItemClick(clickedPosition);
         }
     }
 
@@ -69,5 +78,9 @@ public class MoviePosterAdapter extends RecyclerView.Adapter<MoviePosterAdapter.
     @Override
     public int getItemCount() {
         return this.numMovies;
+    }
+
+    public interface GridItemClickListener {
+        void onGridItemClick(int clickedItemIndex);
     }
 }
