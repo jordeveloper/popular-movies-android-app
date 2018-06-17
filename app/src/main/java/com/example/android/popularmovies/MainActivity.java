@@ -88,13 +88,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         View loadingIndicator = findViewById(R.id.progress_indicator);
         loadingIndicator.setVisibility(View.GONE);
         TextView noInternetTextView = findViewById(R.id.no_internet_notice);
-        noInternetTextView.setVisibility(View.GONE);
+        RecyclerView rv = findViewById(R.id.movie_poster_rv);
 
         mMovies = data;
+        mAdapter.updateData((ArrayList<Movie>) mMovies);
 
         // DONE fill in data into layout
         if (mMovies != null) {
-            mAdapter.updateData((ArrayList<Movie>) mMovies);
+            noInternetTextView.setVisibility(View.GONE);
+            rv.setVisibility(View.VISIBLE);
+        } else {
+            noInternetTextView.setVisibility(View.VISIBLE);
+            rv.setVisibility(View.GONE);
         }
     }
 
