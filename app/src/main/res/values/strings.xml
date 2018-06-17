@@ -6,4 +6,5 @@
     <string name="average_rating">Avg. rating:</string>
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
+    <string name="movie_poster">movie poster</string>
 </resources>
