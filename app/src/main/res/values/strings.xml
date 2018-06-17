@@ -4,4 +4,6 @@
     <string name="title_activity_detail">Movie Details</string>
     <string name="release_date">Release date:</string>
     <string name="average_rating">Avg. rating:</string>
+    <string name="popular">Popular</string>
+    <string name="top_rated">Top Rated</string>
 </resources>
