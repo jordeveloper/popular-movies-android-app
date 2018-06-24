@@ -40,6 +40,7 @@
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
                 android:text="@string/average_rating"
+                android:textStyle="bold"
                 android:paddingRight="4dp"/>
 
             <TextView
@@ -57,7 +58,8 @@
                 android:text="@string/release_date"
                 android:textAlignment="textEnd"
                 android:layout_gravity="end"
-                android:paddingRight="4dp"/>
+                android:paddingRight="4dp"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/movie_release_date"

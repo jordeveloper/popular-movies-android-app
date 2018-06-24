@@ -1,14 +1,15 @@
 package com.example.android.popularmovies;
 
 import android.app.LoaderManager;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -20,7 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<MovieExtras>{
+public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<MovieExtras>, MovieTrailerAdapter.ItemClickListener{
     private final int LOADER_ID = 101;
     private TextView mMovieTitleTextView;
     private TextView mMovieReleaseDateTextView;
@@ -35,6 +36,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private MovieTrailerAdapter mTrailerAdapter;
     private LinearLayoutManager mReviewLayoutManager;
     private LinearLayoutManager mTrailerLayoutManager;
+    private MovieExtras mMovieExtras;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +54,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
         // set up adapter and fill later with the data
         mReviewAdapter = new MovieReviewAdapter();
-        mTrailerAdapter = new MovieTrailerAdapter();
+        mTrailerAdapter = new MovieTrailerAdapter(this);
         mReviewsRecyclerView.setAdapter(mReviewAdapter);
         mTrailersRecyclerView.setAdapter(mTrailerAdapter);
 
@@ -97,6 +99,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public void onLoadFinished(Loader<MovieExtras> loader, MovieExtras data) {
+        mMovieExtras = data;
         if (data != null) {
             View[] views = {mNoReviewsTextView, mNoTrailersTextView, mReviewsRecyclerView};
             hideViews(views);
@@ -129,6 +132,19 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private void showViews(View[] views){
         for(View view : views) {
             view.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onItemClick(int clickedItemIndex) {
+        String trailerKey = mMovieExtras.getTrailers().get(clickedItemIndex).getKey();
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
+        Intent webIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse("http://www.youtube.com/watch?v=" + trailerKey));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            startActivity(webIntent);
         }
     }
 }

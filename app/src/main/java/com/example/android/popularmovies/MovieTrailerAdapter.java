@@ -3,6 +3,7 @@ package com.example.android.popularmovies;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +19,12 @@ import java.util.List;
 public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapter.TrailerViewHolder>{
     private int numTrailers;
     private List<MovieTrailer> trailers;
+    final private ItemClickListener mOnClickListener;
 
-    public MovieTrailerAdapter() {
+    public MovieTrailerAdapter(ItemClickListener listener) {
         this.trailers = null;
         this.numTrailers = 0;
+        this.mOnClickListener = listener;
     }
 
     void updateData(List<MovieTrailer> trailers) {
@@ -35,17 +38,23 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
         notifyDataSetChanged();
     }
 
-    public class TrailerViewHolder extends RecyclerView.ViewHolder{
+    public class TrailerViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView trailerHolder;
         public TrailerViewHolder(View v) {
             super(v);
             trailerHolder = v.findViewById(R.id.trailer_name);
+            v.setOnClickListener(this);
         }
 
         public void bind(List<MovieTrailer> trailers, int position) {
             if (trailers != null && position < trailers.size()){
-                trailerHolder.setText(trailers.get(position).getName());
+                trailerHolder.setText("> " + trailers.get(position).getName());
             }
+        }
+        @Override
+        public void onClick(View v) {
+            int clickedPosition = getAdapterPosition();
+            mOnClickListener.onItemClick(clickedPosition);
         }
     }
 
@@ -73,4 +82,8 @@ public class MovieTrailerAdapter extends RecyclerView.Adapter<MovieTrailerAdapte
         return this.numTrailers;
     }
 
+
+    public interface ItemClickListener {
+        void onItemClick(int clickedItemIndex);
+    }
 }
