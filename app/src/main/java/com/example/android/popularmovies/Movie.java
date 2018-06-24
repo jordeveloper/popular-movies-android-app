@@ -1,22 +1,23 @@
 package com.example.android.popularmovies;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Property;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Movie {
+public class Movie implements Parcelable {
     private long voteCount;
     private long id;
-    private boolean isVideo;
     private double voteAverage;
     private String title;
     private double popularity;
     private String posterPath;
     private String originalLanguage;
     private String originalTitle;
-    private int[] genreIDs;
     private String backdropPath;
-    private boolean isAdult;
     private String overview;
     private String releaseDate;
 
@@ -46,20 +47,13 @@ public class Movie {
         try {
             this.voteCount = json.getLong("vote_count");
             this.id = json.getLong("id");
-            this.isVideo = json.getBoolean("video");
             this.voteAverage = json.getDouble("vote_average");
             this.title = json.getString("title");
             this.popularity = json.getDouble("popularity");
             this.posterPath = json.getString("poster_path");
             this.originalLanguage = json.getString("original_language");
             this.originalTitle = json.getString("original_title");
-            JSONArray genres = json.getJSONArray("genre_ids");
-            this.genreIDs = new int[genres.length()];
-            for (int i = 0; i < genres.length(); i ++) {
-                this.genreIDs[i] = genres.getInt(i);
-            }
             this.backdropPath = json.getString("backdrop_path");
-            this.isAdult = json.getBoolean("adult");
             this.overview = json.getString("overview");
             this.releaseDate = json.getString("release_date");
 
@@ -68,16 +62,39 @@ public class Movie {
         }
     }
 
+    public Movie(Parcel parcel){
+        voteCount = parcel.readLong();
+        id = parcel.readLong();
+        voteAverage = parcel.readDouble();
+        title = parcel.readString();
+        popularity = parcel.readDouble();
+        posterPath = parcel.readString();
+        originalLanguage = parcel.readString();
+        originalTitle = parcel.readString();
+        backdropPath = parcel.readString();
+        overview = parcel.readString();
+        releaseDate = parcel.readString();
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[0];
+        }
+
+    };
+
     public long getVoteCount() {
         return voteCount;
     }
 
     public long getId() {
         return id;
-    }
-
-    public boolean isVideo() {
-        return isVideo;
     }
 
     public double getVoteAverage() {
@@ -104,16 +121,8 @@ public class Movie {
         return originalTitle;
     }
 
-    public int[] getGenreIDs() {
-        return genreIDs;
-    }
-
     public String getBackdropPath() {
         return backdropPath;
-    }
-
-    public boolean isAdult() {
-        return isAdult;
     }
 
     public String getOverview() {
@@ -123,4 +132,26 @@ public class Movie {
     public String getReleaseDate() {
         return releaseDate;
     }
+
+    @Override
+    public int describeContents() {
+        return hashCode();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(voteCount);
+        dest.writeLong(id);
+        dest.writeDouble(voteAverage);
+        dest.writeString(title);
+        dest.writeDouble(popularity);
+        dest.writeString(posterPath);
+        dest.writeString(originalLanguage);
+        dest.writeString(originalTitle);
+        dest.writeString(backdropPath);
+        dest.writeString(overview);
+        dest.writeString(releaseDate);
+    }
+
+
 }

@@ -34,6 +34,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final String MOVIE_SUMMARY_DATA = "plot synopsis";
     public static final String MOVIE_ID = "movie ID";
     public String mSortType;
+    public static final String MOVIE_LIST_KEY = "movies";
+    public static final String SORT_TYPE_KEY = "sort";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,5 +150,20 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     // TODO process for showing the favorites
                 }
         }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        this.mMovies = savedInstanceState.getParcelableArrayList(MOVIE_LIST_KEY);
+        this.mSortType = savedInstanceState.getString(SORT_TYPE_KEY);
+        this.mAdapter.updateData((ArrayList<Movie>) this.mMovies);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(MOVIE_LIST_KEY, (ArrayList<Movie>) this.mMovies);
+        outState.putString(SORT_TYPE_KEY, this.mSortType);
+
+        super.onSaveInstanceState(outState);
     }
 }
