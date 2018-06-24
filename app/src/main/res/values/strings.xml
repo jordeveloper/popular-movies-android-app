@@ -11,4 +11,7 @@
     <string name="reviews_unavailable">Reviews unavailable</string>
     <string name="trailers_unavailable">Trailers unavailable</string>
     <string name="trailers_header">Trailers</string>
+    <string name="radio_button_favorites">Favorites</string>
+    <string name="mark_as_favorite">Favorite</string>
+    <string name="un_favorite">Unfavorite</string>
 </resources>

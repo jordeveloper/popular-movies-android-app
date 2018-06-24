@@ -143,6 +143,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                     getLoaderManager().restartLoader(LOADER_ID, null, this);
                     break;
                 }
+            case R.id.radio_favorites:
+                if (checked){
+                    // TODO process for showing the favorites
+                }
         }
     }
 }
