@@ -7,4 +7,8 @@
     <string name="popular">Popular</string>
     <string name="top_rated">Top Rated</string>
     <string name="movie_poster">movie poster</string>
+    <string name="reviews_header">Reviews</string>
+    <string name="reviews_unavailable">Reviews unavailable</string>
+    <string name="trailers_unavailable">Trailers unavailable</string>
+    <string name="trailers_header">Trailers</string>
 </resources>

@@ -23,7 +23,8 @@ public class APIUtils {
     // endpoints for sorted data
     public final static String POPULAR_ENDPOINT = "popular";
     public final static String TOP_RATED_ENDPOINT = "top_rated";
-    public final static String MOVIE_DETAILS_ENDPOINT = "";
+    public final static String MOVIE_REVIEWS_ENDPOINT = "/reviews";
+    public final static String MOVIE_TRAILERS_ENDPOINT = "/videos";
 
     // query string
     public final static String QUERY_PARAM_API_KEY = "api_key";
@@ -37,7 +38,7 @@ public class APIUtils {
      */
     public static URL buildQueryUrl(String endpoint, String apiKey) {
         Uri queryUri = Uri.parse(API_BASE_URL).buildUpon()
-                .appendPath(endpoint)
+                .appendEncodedPath(endpoint)
                 .appendQueryParameter(QUERY_PARAM_API_KEY, apiKey)
                 .build();
 
@@ -47,7 +48,7 @@ public class APIUtils {
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
-
+        Log.v("URL created", url.toString());
         return url;
     }
 
@@ -138,14 +139,32 @@ public class APIUtils {
     }
 
     /*
-    Method to make a request to the movie endpoint with a specific movie ID and return a JSON
+    Method to make a request to the movie reviews endpoint with a specific movie ID and return a JSON
      */
-    public static JSONObject getMovieDetails(int movie_id, String apiKey) {
-        URL url = APIUtils.buildQueryUrl(APIUtils.MOVIE_DETAILS_ENDPOINT + movie_id, apiKey);
+    public static JSONArray getMovieReviews(long movieID, String apiKey) {
+        URL url = APIUtils.buildQueryUrl(String.valueOf(movieID) + APIUtils.MOVIE_REVIEWS_ENDPOINT, apiKey);
         try {
             String results = APIUtils.getResponseFromHttpUrl(url);
             JSONObject json = new JSONObject(results);
-            return json;
+            return json.getJSONArray("results");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+    Method to make a request to the movie trailers endpoint with a specific movie ID and return a JSON
+     */
+    public static JSONArray getMovieTrailers(long movieID, String apiKey) {
+        URL url = APIUtils.buildQueryUrl(String.valueOf(movieID) + APIUtils.MOVIE_TRAILERS_ENDPOINT, apiKey);
+        try {
+            String results = APIUtils.getResponseFromHttpUrl(url);
+            JSONObject json = new JSONObject(results);
+            return json.getJSONArray("results");
         } catch (IOException e) {
             e.printStackTrace();
             return null;

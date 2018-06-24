@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final String MOVIE_POSTER_URL_DATA = "movie poster url";
     public static final String MOVIE_VOTE_AVERAGE_DATA = "vote average";
     public static final String MOVIE_SUMMARY_DATA = "plot synopsis";
+    public static final String MOVIE_ID = "movie ID";
     public String mSortType;
 
     @Override
@@ -118,6 +119,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         intent.putExtra(this.MOVIE_POSTER_URL_DATA, movie.getPosterPath());
         intent.putExtra(this.MOVIE_VOTE_AVERAGE_DATA, movie.getVoteAverage());
         intent.putExtra(this.MOVIE_SUMMARY_DATA, movie.getOverview());
+        intent.putExtra(this.MOVIE_ID, movie.getId());
         startActivity(intent);
     }
 
