@@ -1,5 +1,6 @@
 package com.example.android.popularmovies;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MovieExtras {
@@ -7,6 +8,11 @@ public class MovieExtras {
     private List<MovieTrailer> trailers;
 
     public MovieExtras(List<MovieReview> reviews, List<MovieTrailer> trailers) {
+        this.reviews = reviews;
+        this.trailers = trailers;
+    }
+
+    public MovieExtras(ArrayList<MovieReview> reviews, ArrayList<MovieTrailer> trailers) {
         this.reviews = reviews;
         this.trailers = trailers;
     }

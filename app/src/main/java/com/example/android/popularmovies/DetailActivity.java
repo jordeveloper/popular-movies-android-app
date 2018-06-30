@@ -19,6 +19,7 @@ import android.widget.TextView;
 import com.example.android.popularmovies.utilities.APIUtils;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<MovieExtras>, MovieTrailerAdapter.ItemClickListener{
@@ -37,6 +38,8 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private LinearLayoutManager mReviewLayoutManager;
     private LinearLayoutManager mTrailerLayoutManager;
     private MovieExtras mMovieExtras;
+    private static final String MOVIE_TRAILERS_KEY = "trailers_key";
+    private static final String MOVIE_REVIEWS_KEY = "reviews_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,6 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
 
     @Override
     public Loader<MovieExtras> onCreateLoader(int id, Bundle args) {
-        // TODO get the sorted preference from the bundle and use that one instead of always POPULAR
         return new DetailsAsyncTaskLoader(this, args.getLong(MainActivity.MOVIE_ID));
     }
 
@@ -107,8 +109,18 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
             List<MovieTrailer> trailers = data.getTrailers();
             mReviewAdapter.updateData(reviews);
             mTrailerAdapter.updateData(trailers);
-            mReviewsRecyclerView.setVisibility(View.VISIBLE);
-            mTrailersRecyclerView.setVisibility(View.VISIBLE);
+            if (reviews == null || reviews.size() == 0) {
+                mReviewsRecyclerView.setVisibility(View.GONE);
+                mNoReviewsTextView.setVisibility(View.VISIBLE);
+            } else{
+                mReviewsRecyclerView.setVisibility(View.VISIBLE);
+            }
+            if (trailers == null || trailers.size() == 0) {
+                mTrailersRecyclerView.setVisibility(View.GONE);
+                mNoTrailersTextView.setVisibility(View.VISIBLE);
+            } else {
+                mTrailersRecyclerView.setVisibility(View.VISIBLE);
+            }
         } else {
             View[] viewsToHide = {mReviewsRecyclerView, mTrailersRecyclerView};
             TextView[] viewsToShow = {mNoReviewsTextView, mNoTrailersTextView};
@@ -146,5 +158,22 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         } catch (ActivityNotFoundException ex) {
             startActivity(webIntent);
         }
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        ArrayList<MovieReview> reviews = savedInstanceState.getParcelableArrayList(MOVIE_REVIEWS_KEY);
+        ArrayList<MovieTrailer> trailers = savedInstanceState.getParcelableArrayList(MOVIE_TRAILERS_KEY);
+        this.mMovieExtras = new MovieExtras(reviews, trailers);
+        this.mReviewAdapter.updateData(reviews);
+        this.mTrailerAdapter.updateData(trailers);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(MOVIE_TRAILERS_KEY, (ArrayList<MovieTrailer>) this.mMovieExtras.getTrailers());
+        outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, (ArrayList<MovieReview>) this.mMovieExtras.getReviews());
+
+        super.onSaveInstanceState(outState);
     }
 }
