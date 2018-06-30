@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public String mSortType;
     public static final String MOVIE_LIST_KEY = "movies";
     public static final String SORT_TYPE_KEY = "sort";
+    private boolean isConnected;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,16 +56,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // set which type of data to pull
         if (((RadioButton) findViewById(R.id.radio_popular)).isChecked()) {
             this.mSortType = APIUtils.POPULAR_ENDPOINT;
-        } else {
+        } else if (((RadioButton) findViewById(R.id.radio_top_rated)).isChecked()){
             this.mSortType = APIUtils.TOP_RATED_ENDPOINT;
+        } else {
+            this.mSortType = APIUtils.MOVIE_ENDPOINT;
         }
 
         // Check for internet connection
         ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+        this.isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
 
-        if (isConnected){
+        if (this.isConnected){
             LoaderManager loaderManager = getLoaderManager();
             loaderManager.initLoader(LOADER_ID, null, this);
             Log.v(LOG_TAG, "Loader created!");
@@ -81,7 +84,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     public Loader<List<Movie>> onCreateLoader(int id, Bundle args) {
-        // TODO get the sorted preference from the bundle and use that one instead of always POPULAR
         return new MovieAsyncTaskLoader(this, this.mSortType);
     }
 
@@ -92,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         loadingIndicator.setVisibility(View.GONE);
         TextView noInternetTextView = findViewById(R.id.no_internet_notice);
         RecyclerView rv = findViewById(R.id.movie_poster_rv);
+        TextView noFavoritesTextView = findViewById(R.id.no_favorites_notice);
 
         mMovies = data;
         mAdapter.updateData((ArrayList<Movie>) mMovies);
@@ -99,9 +102,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         // DONE fill in data into layout
         if (mMovies != null) {
             noInternetTextView.setVisibility(View.GONE);
+            noFavoritesTextView.setVisibility(View.GONE);
             rv.setVisibility(View.VISIBLE);
         } else {
-            noInternetTextView.setVisibility(View.VISIBLE);
+            if (this.isConnected && this.mSortType == APIUtils.MOVIE_ENDPOINT) {
+                noFavoritesTextView.setVisibility(View.VISIBLE);
+            } else {
+                noInternetTextView.setVisibility(View.VISIBLE);
+            }
             rv.setVisibility(View.GONE);
         }
     }
@@ -147,7 +155,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             case R.id.radio_favorites:
                 if (checked){
-                    // TODO process for showing the favorites
+                    // Get data for the favorite movies
+                    this.mSortType = APIUtils.MOVIE_ENDPOINT;
+                    getLoaderManager().restartLoader(LOADER_ID, null, this);
+                    break;
                 }
         }
     }

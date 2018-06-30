@@ -33,6 +33,8 @@
             android:layout_height="wrap_content"
             android:textOff="@string/mark_as_favorite"
             android:textOn="@string/un_favorite"
+            android:onClick="onFavoriteToggled"
+            android:checked="false"
             android:layout_gravity="center"/>
 
         <LinearLayout

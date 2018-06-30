@@ -14,4 +14,5 @@
     <string name="radio_button_favorites">Favorites</string>
     <string name="mark_as_favorite">Favorite</string>
     <string name="un_favorite">Unfavorite</string>
+    <string name="you_have_no_favorites_yet">You have no favorites yet!</string>
 </resources>

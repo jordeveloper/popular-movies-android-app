@@ -2,6 +2,7 @@ package com.example.android.popularmovies;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
+import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
@@ -9,6 +10,8 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.example.android.popularmovies.data.FavoriteMovieProvider;
+import com.example.android.popularmovies.data.MovieContract;
 import com.example.android.popularmovies.utilities.APIUtils;
 
 import org.json.JSONArray;
@@ -50,6 +53,27 @@ public class MovieAsyncTaskLoader extends AsyncTaskLoader<List<Movie>> {
                     break;
                 case APIUtils.TOP_RATED_ENDPOINT:
                     movies = APIUtils.getTopRatedMovies(getContext().getString(R.string.API_KEY));
+                    break;
+                case APIUtils.MOVIE_ENDPOINT:
+                    // get all the favorite movies from the DB
+                    Cursor favorites = getContext().getContentResolver()
+                            .query(MovieContract.FavoriteMovieEntry.CONTENT_URI,
+                                    null, null, null, null);
+
+                    // then make requests for each of their details assembling the JSONArray
+                    if (favorites != null && favorites.getCount() > 0) {
+                        movies = new JSONArray();
+                        int idCol = favorites.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_NAME_MOVIE_ID);
+                        for (int i = 0; i < favorites.getCount(); i++) {
+                            favorites.moveToPosition(0);
+                            movies.put(APIUtils.getMovieDetails(
+                                    favorites.getInt(idCol),
+                                    getContext().getString(R.string.API_KEY)));
+                        }
+                    } else {
+                        movies = null;
+                    }
+                    favorites.close();
                     break;
                 default:
                     movies = null;

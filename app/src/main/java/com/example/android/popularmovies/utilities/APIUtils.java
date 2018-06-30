@@ -25,6 +25,7 @@ public class APIUtils {
     public final static String TOP_RATED_ENDPOINT = "top_rated";
     public final static String MOVIE_REVIEWS_ENDPOINT = "/reviews";
     public final static String MOVIE_TRAILERS_ENDPOINT = "/videos";
+    public final static String MOVIE_ENDPOINT = "";
 
     // query string
     public final static String QUERY_PARAM_API_KEY = "api_key";
@@ -165,6 +166,24 @@ public class APIUtils {
             String results = APIUtils.getResponseFromHttpUrl(url);
             JSONObject json = new JSONObject(results);
             return json.getJSONArray("results");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /*
+    Method to make a request to the movie details endpoint with a specific movie ID and return a JSON
+     */
+    public static JSONObject getMovieDetails(long movieID, String apiKey) {
+        URL url = APIUtils.buildQueryUrl(String.valueOf(movieID), apiKey);
+        try {
+            String results = APIUtils.getResponseFromHttpUrl(url);
+            JSONObject json = new JSONObject(results);
+            return json;
         } catch (IOException e) {
             e.printStackTrace();
             return null;

@@ -4,7 +4,6 @@
     package="com.example.android.popularmovies">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -26,6 +25,10 @@
             android:label="@string/title_activity_detail"
             android:parentActivityName=".MainActivity"
             tools:targetApi="jelly_bean" />
+        <provider
+            android:name="com.example.android.popularmovies.data.FavoriteMovieProvider"
+            android:authorities="com.example.android.popularmovies"
+            android:exported="false"/>
     </application>
 
 </manifest>
