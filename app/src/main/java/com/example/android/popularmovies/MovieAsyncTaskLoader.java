@@ -65,7 +65,7 @@ public class MovieAsyncTaskLoader extends AsyncTaskLoader<List<Movie>> {
                         movies = new JSONArray();
                         int idCol = favorites.getColumnIndex(MovieContract.FavoriteMovieEntry.COLUMN_NAME_MOVIE_ID);
                         for (int i = 0; i < favorites.getCount(); i++) {
-                            favorites.moveToPosition(0);
+                            favorites.moveToPosition(i);
                             movies.put(APIUtils.getMovieDetails(
                                     favorites.getInt(idCol),
                                     getContext().getString(R.string.API_KEY)));
