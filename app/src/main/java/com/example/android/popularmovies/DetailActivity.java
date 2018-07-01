@@ -17,6 +17,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -51,6 +52,7 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
     private static final String MOVIE_TRAILERS_KEY = "trailers_key";
     private static final String MOVIE_REVIEWS_KEY = "reviews_key";
     private static final String FAVORITES_TOGGLE_KEY = "favorite_toggle";
+    private static final String SCROLL_COORDINATES_KEY = "scroll_position";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -192,6 +194,16 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         this.mTrailerAdapter.updateData(trailers);
         this.mIsFavorite = savedInstanceState.getBoolean(FAVORITES_TOGGLE_KEY);
         this.mToggleButton.setChecked(this.mIsFavorite);
+
+        final ScrollView sv = findViewById(R.id.details_scroll_view);
+        final int[] scrollCoordinates = savedInstanceState.getIntArray(SCROLL_COORDINATES_KEY);
+        if(scrollCoordinates != null) {
+            sv.post(new Runnable() {
+                public void run() {
+                    sv.scrollTo(scrollCoordinates[0], scrollCoordinates[1]);
+                }
+            });
+        }
     }
 
     @Override
@@ -199,6 +211,9 @@ public class DetailActivity extends AppCompatActivity implements LoaderManager.L
         outState.putParcelableArrayList(MOVIE_TRAILERS_KEY, (ArrayList<MovieTrailer>) this.mMovieExtras.getTrailers());
         outState.putParcelableArrayList(MOVIE_REVIEWS_KEY, (ArrayList<MovieReview>) this.mMovieExtras.getReviews());
         outState.putBoolean(FAVORITES_TOGGLE_KEY, this.mIsFavorite);
+
+        ScrollView sv = findViewById(R.id.details_scroll_view);
+        outState.putIntArray(SCROLL_COORDINATES_KEY, new int[]{ sv.getScrollX(), sv.getScrollY()});
 
         super.onSaveInstanceState(outState);
     }
