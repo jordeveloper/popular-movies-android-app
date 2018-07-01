@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         this.mMovies = savedInstanceState.getParcelableArrayList(MOVIE_LIST_KEY);
         this.mSortType = savedInstanceState.getString(SORT_TYPE_KEY);
         this.mAdapter.updateData((ArrayList<Movie>) this.mMovies);
+
+        restoreRadioButtonState();
     }
 
     @Override
@@ -176,5 +178,21 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         outState.putString(SORT_TYPE_KEY, this.mSortType);
 
         super.onSaveInstanceState(outState);
+    }
+
+    private void restoreRadioButtonState(){
+        switch (this.mSortType) {
+            case APIUtils.POPULAR_ENDPOINT:
+                ((RadioButton) findViewById(R.id.radio_popular)).setChecked(true);
+                break;
+            case APIUtils.TOP_RATED_ENDPOINT:
+                ((RadioButton) findViewById(R.id.radio_top_rated)).setChecked(true);
+                break;
+            case APIUtils.MOVIE_ENDPOINT:
+                ((RadioButton) findViewById(R.id.radio_favorites)).setChecked(true);
+                break;
+            default:
+                break;
+        }
     }
 }
