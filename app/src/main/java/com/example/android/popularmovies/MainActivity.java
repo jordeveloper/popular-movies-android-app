@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public static final String MOVIE_LIST_KEY = "movies";
     public static final String SORT_TYPE_KEY = "sort";
     private boolean isConnected;
+    private static final String LAYOUT_POSITION = "layout_position_key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -168,6 +170,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         this.mMovies = savedInstanceState.getParcelableArrayList(MOVIE_LIST_KEY);
         this.mSortType = savedInstanceState.getString(SORT_TYPE_KEY);
         this.mAdapter.updateData((ArrayList<Movie>) this.mMovies);
+        this.mLayoutManager.onRestoreInstanceState(savedInstanceState.getParcelable(LAYOUT_POSITION));
 
         restoreRadioButtonState();
     }
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelableArrayList(MOVIE_LIST_KEY, (ArrayList<Movie>) this.mMovies);
         outState.putString(SORT_TYPE_KEY, this.mSortType);
+        outState.putParcelable(LAYOUT_POSITION, this.mLayoutManager.onSaveInstanceState());
 
         super.onSaveInstanceState(outState);
     }
